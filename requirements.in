@@ -1,0 +1,8 @@
+# actual dependencies
+gpiozero  # control GPIO pins
+
+# dev tooling
+pip-tools
+black
+isort
+bpython
