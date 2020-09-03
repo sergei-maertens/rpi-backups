@@ -1,4 +1,5 @@
 # actual dependencies
+rpio  # pin driver
 gpiozero  # control GPIO pins
 
 # dev tooling

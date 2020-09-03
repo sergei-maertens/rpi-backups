@@ -23,6 +23,7 @@ pip-tools==5.3.1          # via -r requirements.in
 pygments==2.6.1           # via bpython
 regex==2020.7.14          # via black
 requests==2.24.0          # via bpython
+rpio==0.10.0              # via -r requirements.in
 six==1.15.0               # via bpython, pip-tools
 toml==0.10.1              # via black
 typed-ast==1.4.1          # via black
