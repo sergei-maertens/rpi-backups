@@ -1,4 +1,4 @@
-# actual dependencies
+python-decouple
 pigpio  # pin driver
 gpiozero  # control GPIO pins
 

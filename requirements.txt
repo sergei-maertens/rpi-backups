@@ -24,6 +24,7 @@ pathspec==0.8.0           # via black
 pigpio==1.46              # via -r requirements.in
 pip-tools==5.3.1          # via -r requirements.in
 pygments==2.6.1           # via bpython
+python-decouple==3.3      # via -r requirements.in
 pytz==2020.1              # via django
 regex==2020.7.14          # via black
 requests==2.24.0          # via bpython
