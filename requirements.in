@@ -2,6 +2,9 @@
 pigpio  # pin driver
 gpiozero  # control GPIO pins
 
+# server
+django
+
 # dev tooling
 pip-tools
 black
