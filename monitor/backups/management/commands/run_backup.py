@@ -1,9 +1,8 @@
-import socket
 import time
 
 from django.core.management import BaseCommand
 
-BUFFER_SIZE = 64
+from ._monitor import Monitor
 
 
 class Command(BaseCommand):
@@ -15,29 +14,17 @@ class Command(BaseCommand):
         parser.add_argument("--sleep", default=10, type=int)
 
     def handle(self, **options):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            # sock.settimeout(2)
-            # Connect to server and send data
-            sock.connect((options["host"], options["port"]))
+        with Monitor(options["host"], options["port"]) as monitor:
+            monitor.send_event("ping")
+            self.stdout.write("Monitor online")
 
-            try:
-                # ping server
-                sock.sendall(b"ping")
-                received = sock.recv(BUFFER_SIZE)
-                if received == b"ok":
-                    self.stdout.write("Server up")
+            monitor.send_event("backup:started")
+            self.stdout.write("Backup reported as in progress")
 
-                sock.sendall(b"backup:started")
-                received = sock.recv(BUFFER_SIZE)
-                if received == b"ok":
-                    self.stdout.write("Backup start notified")
+            self.stdout.write("Running backup...")
+            time.sleep(options["sleep"])
 
-                time.sleep(options["sleep"])
-
-                # sock.sendall(b"backup:ended:success")
-                sock.sendall(b"backup:ended:failure")
-                if received == b"ok":
-                    self.stdout.write("Backup state marked")
-
-            except socket.timeout:
-                self.stderr.write("Connection timed out")
+            monitor.send_event("backup:ended:success")
+            self.stdout.write("Backup marked as success")
+            # monitor.send_event("backup:ended:failure")
+            # self.stdout.write("Backup marked as failure")
