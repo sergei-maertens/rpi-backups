@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
-from decouple import config
+from decouple import Csv, config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -123,3 +123,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = "/static/"
+
+# Custom settings
+BACKUP_SSH_USER = config("BACKUP_SSH_USER")
+BACKUP_BASE_DIR = Path(config("BACKUP_BASE_DIR"))
+BACKUP_SOURCE_DIR = Path(config("BACKUP_SOURCE_DIR"))
+BACKUP_EXCLUDE = config("BACKUP_EXCLUDE", cast=Csv())
