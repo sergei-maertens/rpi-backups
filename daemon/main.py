@@ -49,7 +49,9 @@ def finish_backup(state: str) -> str:
 
 class LEDStateHandler(socketserver.BaseRequestHandler):
     def handle(self):
+        print(f"Handling connection from {self.client_address}")
         read_message(self.request, event.dispatch)
+        print(f"Closing connection with {self.client_address}")
 
 
 class Server(socketserver.ThreadingTCPServer):
