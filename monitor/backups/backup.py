@@ -48,7 +48,7 @@ def perform() -> BackupResult:
         if not ISO_8601.match(path.name):
             continue
 
-        prev_backup_dir = path
+        prev_backup_dir = path / settings.BACKUP_SOURCE_DIR.name
         break
 
     # build the rsync command
