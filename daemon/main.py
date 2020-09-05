@@ -1,17 +1,9 @@
-#!/usr/bin/env python
-
 import socketserver
 
 from gpiozero import LED
 
 from .events import event
 from .protocol import read_message
-
-# server config
-HOST = "0.0.0.0"
-PORT = 5555
-BUFFER_SIZE = 64
-TIMEOUT = 5.0
 
 # LEDs
 
@@ -58,13 +50,9 @@ class Server(socketserver.ThreadingTCPServer):
     allow_reuse_address = True
 
 
-def main():
-    with Server((HOST, PORT), LEDStateHandler) as server:
+def main(host, port):
+    with Server((host, port), LEDStateHandler) as server:
         SERVER_ONLINE.on()
         # Activate the server; this will keep running until you
         # interrupt the program with Ctrl-C
         server.serve_forever()
-
-
-if __name__ == "__main__":
-    main()
