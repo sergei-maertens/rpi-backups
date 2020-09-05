@@ -14,7 +14,8 @@ class Command(BaseCommand):
         parser.add_argument("--sleep", default=10, type=int)
 
     def handle(self, **options):
-        with Monitor(options["host"], options["port"]) as monitor:
+        monitor = Monitor(options["host"], options["port"])
+        with monitor:
             monitor.send_event("ping")
             self.stdout.write("Monitor online")
 
@@ -24,6 +25,7 @@ class Command(BaseCommand):
             self.stdout.write("Running backup...")
             time.sleep(options["sleep"])
 
+        with monitor:
             monitor.send_event("backup:ended:success")
             self.stdout.write("Backup marked as success")
             # monitor.send_event("backup:ended:failure")
