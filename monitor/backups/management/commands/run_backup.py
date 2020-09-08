@@ -3,6 +3,7 @@ from django.utils import timezone
 
 from ...backup import perform
 from ...models import BackupRun, BackupRunStates
+from ._log import BackupStats, parse_rsync_log
 from ._monitor import Monitor
 
 
@@ -25,17 +26,24 @@ class Command(BaseCommand):
             run = BackupRun.objects.create()
 
             try:
-                success = perform()
+                backup_result = perform()
             except Exception as exc:
-                success = False
+                backup_result = False
                 self.stderr.write(f"Exception happened: {exc}")
 
             run.ended = timezone.now()
-            run.state = BackupRunStates.finished if success else BackupRunStates.failed
+            run.state = (
+                BackupRunStates.finished if backup_result else BackupRunStates.failed
+            )
             run.save(update_fields=["ended", "state"])
 
+            stats: BackupStats = parse_rsync_log(backup_result.log_file)
+            run.size_transferred = stats.bytes_received
+            run.num_files = stats.num_files
+            run.save(update_fields=["size_transferred", "num_files"])
+
         with monitor:
-            result = "success" if success else "failure"
+            result = "success" if backup_result else "failure"
             monitor.send_event(f"backup:ended:{result}")
-            out = self.stdout if success else self.stderr
+            out = self.stdout if backup_result else self.stderr
             out.write(f"Backup marked as {result}")
