@@ -30,17 +30,19 @@ class Command(BaseCommand):
             except Exception as exc:
                 backup_result = False
                 self.stderr.write(f"Exception happened: {exc}")
-
-            run.ended = timezone.now()
-            run.state = (
-                BackupRunStates.finished if backup_result else BackupRunStates.failed
-            )
-            run.save(update_fields=["ended", "state"])
-
-            stats: BackupStats = parse_rsync_log(backup_result.log_file)
-            run.size_transferred = stats.bytes_received
-            run.num_files = stats.num_files
-            run.save(update_fields=["size_transferred", "num_files"])
+            else:
+                stats: BackupStats = parse_rsync_log(backup_result.log_file)
+                run.size_transferred = stats.bytes_received
+                run.num_files = stats.num_files
+                run.save(update_fields=["size_transferred", "num_files"])
+            finally:
+                run.ended = timezone.now()
+                run.state = (
+                    BackupRunStates.finished
+                    if backup_result
+                    else BackupRunStates.failed
+                )
+                run.save(update_fields=["ended", "state"])
 
         with monitor:
             result = "success" if backup_result else "failure"
