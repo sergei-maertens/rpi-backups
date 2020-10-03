@@ -49,7 +49,12 @@ def perform() -> BackupResult:
             continue
 
         prev_backup_dir = path / settings.BACKUP_SOURCE_DIR.name
-        break
+
+        # ensure that the directory actually exists
+        if not prev_backup_dir.is_dir():
+            continue
+        else:
+            break
 
     # build the rsync command
     # -r: recurse
