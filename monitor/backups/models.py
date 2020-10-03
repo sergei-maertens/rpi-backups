@@ -22,7 +22,7 @@ class BackupRun(models.Model):
     )
     started = models.DateTimeField(_("started"), default=timezone.now)
     ended = models.DateTimeField(
-        _("started"),
+        _("ended"),
         blank=True,
         null=True,
     )
